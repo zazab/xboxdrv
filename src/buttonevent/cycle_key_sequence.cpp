@@ -51,7 +51,8 @@ CycleKeySequence::CycleKeySequence(UInput& uinput, int slot, bool extra_devices,
   m_keys(keys),
   m_wrap_around(wrap_around),
   m_current_key(0),
-  m_last_key(0)
+  m_last_key(0),
+  m_pressed(-1)
 {
   assert(!m_keys.empty());
 
@@ -66,7 +67,46 @@ CycleKeySequence::send(bool value)
 {
   int send_key = has_current_key() ? m_current_key : m_last_key;
 
-  m_keys[send_key].send(value); 
+  if (m_pressed != -1) // is_pressed()
+  {
+    // if one key in the sequence is pressed and we receive another
+    // press event, release the last pressed key
+    if (value)
+    {
+      // release the last key
+      m_keys[m_pressed].send(uinput, false); 
+
+      // press the new key
+      m_keys[send_key].send(uinput, value); 
+
+      // record it for later use
+      m_pressed = send_key;
+    }
+    else  // (!value)
+    {
+      if (send_key == m_pressed)
+      {
+        // pressed key is released
+        m_keys[send_key].send(uinput, value); 
+        m_pressed = -1;
+      }
+      else
+      {
+        // FIXME: does not work, need a way to distinguish who is sending the
+        // release event
+      }
+    }
+  }
+  else
+  {
+    // no key is currently pressed
+    m_keys[send_key].send(uinput, value); 
+    if (value)
+    {
+      // record the last key press event send for potential later release
+      m_pressed = send_key;
+    }
+  }
 
   m_last_key = send_key;
   m_current_key = -1;

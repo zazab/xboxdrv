@@ -49,6 +49,8 @@ private:
   /** the last key that was send out */
   int m_last_key;
 
+  int m_pressed;
+
 public:
   CycleKeySequence(UInput& uinput, int slot, bool extra_devices,
                    const Keys& keys, bool wrap_around);
