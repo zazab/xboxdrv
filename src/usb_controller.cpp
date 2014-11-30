@@ -305,13 +305,15 @@ USBController::usb_find_ep(int direction, uint8_t if_class, uint8_t if_subclass,
           ++altsetting)
       {
         log_debug("Interface: " << static_cast<int>(altsetting->bInterfaceNumber));
-          
+
         for(const libusb_endpoint_descriptor* endpoint = altsetting->endpoint; 
             endpoint != altsetting->endpoint + altsetting->bNumEndpoints; 
             ++endpoint)
         {
           log_debug("    Endpoint: " << int(endpoint->bEndpointAddress & LIBUSB_ENDPOINT_ADDRESS_MASK) <<
                     "(" << ((endpoint->bEndpointAddress & LIBUSB_ENDPOINT_DIR_MASK) ? "IN" : "OUT") << ")");
+          log_debug(" addr:" << int(endpoint->bEndpointAddress)<< " iClass: " << int(altsetting->bInterfaceClass)<<
+                    " iSubClass: " << int(altsetting->bInterfaceSubClass)<< " prot: " << int(altsetting->bInterfaceProtocol));
 
           if ((endpoint->bEndpointAddress & LIBUSB_ENDPOINT_DIR_MASK) == direction &&
               altsetting->bInterfaceClass    == if_class    &&
