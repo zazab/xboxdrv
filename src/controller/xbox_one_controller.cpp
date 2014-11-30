@@ -35,8 +35,8 @@ XboxOneController::XboxOneController(libusb_device* dev, bool try_detach) :
   xbox(m_message_descriptor)
 {
   // find endpoints
-  m_endpoint_in  = usb_find_ep(LIBUSB_ENDPOINT_IN,  88, 66, 0);
-  m_endpoint_out = usb_find_ep(LIBUSB_ENDPOINT_OUT, 88, 66, 0);
+  m_endpoint_in  = usb_find_ep(LIBUSB_ENDPOINT_IN,  255, 71, 208);
+  m_endpoint_out = usb_find_ep(LIBUSB_ENDPOINT_OUT, 255, 71, 208);
   
   usb_claim_interface(0, try_detach);
   usb_submit_read(m_endpoint_in, 32);
