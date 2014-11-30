@@ -27,10 +27,12 @@
 #include "xbox360_controller.hpp"
 #include "xbox360_wireless_controller.hpp"
 #include "xbox_controller.hpp"
+#include "xbox_one_controller.hpp"
 
 ControllerPtr
 ControllerFactory::create(const XPadDevice& dev_type, libusb_device* dev, const Options& opts)
 {
+  log_debug("dev_type" << int(dev_type.type))
   switch (dev_type.type)
   {
     case GAMEPAD_XBOX360_PLAY_N_CHARGE: 
@@ -48,6 +50,16 @@ ControllerFactory::create(const XPadDevice& dev_type, libusb_device* dev, const 
     case GAMEPAD_XBOX360:
     case GAMEPAD_XBOX360_GUITAR:
       return ControllerPtr(new Xbox360Controller(dev, 
+                                                 opts.chatpad, opts.chatpad_no_init, opts.chatpad_debug,
+                                                 opts.headset, 
+                                                 opts.headset_debug, 
+                                                 opts.headset_dump,
+                                                 opts.headset_play,
+                                                 opts.detach_kernel_driver));
+      break;
+
+    case GAMEPAD_XBOX_ONE:
+      return ControllerPtr(new XboxOneController(dev, 
                                                  opts.chatpad, opts.chatpad_no_init, opts.chatpad_debug,
                                                  opts.headset, 
                                                  opts.headset_debug, 
